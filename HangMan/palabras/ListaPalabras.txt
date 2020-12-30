@@ -1,0 +1,10 @@
+marcadores
+tablero
+borrador
+pupitre
+mesa
+caneca
+mapa
+lapiz
+esfero
+lampara
