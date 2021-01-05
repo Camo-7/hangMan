@@ -5,51 +5,48 @@ class Word:
 
     complete = bool
     word = str
-    indexWord = []
+    indexWord = str
 
     # Método Constructor
     #--------------------------------------------------------------------------------------
     def __init__(self, word):
         self.word = word
         self.complete = False
-        self.registerIndexWords()
-
+        self.indexWord = ""
+        for letter in word:
+            self.indexWord = self.indexWord + "_"
 
     # Métodos
-    #--------------------------------------------------------------------------------------
-    #registerIndexWords se crea una lista cuya longitud es igual a la cantidad de caracteres que tiene la palabra del vector words[] que ingresa como parámetro 
-    def registerIndexWords(self):
-        longA = len(self.word)
-        for letter in self.word:
-            self.indexWord.append(False)
-
+    #--------------------------------------------------------------------------------------          
     #recibe una letra por parámetro, si reconoce esta letra dentro de la palabra en juego, pone en su indice verdadero de modo que al pintar la palabra se vean los aciertos
     def mathLetter(self, sletter):
-        counter = 0
+        word = ""
         happend = False
-        for letter in self.word:
-            if letter == sletter:
-                self.indexWord[counter] = True
+        for position in range(len(self.word)):
+            if self.word[position] == sletter:
+                word = word + sletter
                 happend = True
-            counter +=1
+            elif self.indexWord[position] != "_":
+                word = word + self.indexWord[position]
+            else:
+                word = word + "_"
+        self.indexWord = word
         self.isComplete()
         return happend
     
     # retorna la palabra del objeto, como visible o no visible
     def showWord(self):
-        long = 0
-        palabra = ""
-        for wletter in self.word:
-            if self.indexWord[long] == False:
-                palabra = palabra + " _"
+        word = ""
+        for wletter in self.indexWord:
+            if wletter == "_":
+                word = word + " _"
             else:
-                palabra = palabra + wletter
-            long +=1
-        return palabra
+                word = word + wletter
+        return word
 
     # informa si la palabra ya fue descubierta o no
     def isComplete(self):
-        if self.word == self.showWord():
+        if self.word == self.indexWord:
             self.complete = True
         else:
             self.complete = False

@@ -5,10 +5,11 @@ class Game:
     # Atributos
     #--------------------------------------------------------------------------------------
 
+    words = []
     onGame   = bool
     oportunities = int
-    words = []
     selectedLetters = str
+    number = int
 
     # Método Constructor
     #--------------------------------------------------------------------------------------
@@ -19,7 +20,7 @@ class Game:
         self.oportunities = oportunities
         self.selectedLetters = ""
         self.loadWords()
-        self.orderRandom()
+        self.orderRandom()      
         self.get_beginGame()
 
 
@@ -29,7 +30,11 @@ class Game:
     def loadWords(self):
         f = open("palabras/ListaPalabras.txt")
         for line in f.readlines():
-            self.words.append(Word(line.replace("\n","")))
+            x = line.replace("\n","") #Quita el caracter de salto de linea de la palabra de lo contrario figuraría como un caracter extra en cada palabra
+            x = x.strip() #quita los espacios en blanco del texto, es decir si hay un espacio final lo quita
+            x = x.lower() #si en el archivo se escribió alguna letra en mayúscula, los pone en minúscula
+            palabra = Word(x.strip())
+            self.words.append(palabra)
         f.close()
 
     # ordena al azar la lista words[], requiere la importación de la libreria random
@@ -40,27 +45,47 @@ class Game:
     #def inicia el juego
     def get_beginGame(self):
         tries = 0
-        number = 0
+        self.number = 0
 
         while self.onGame:
             self.get_paint(tries)
-            print(self.words[number].showWord()) #aquí se debe elegir que palabra de la lista va
-            if self.words[number].complete:
-                self.get_paint(0)
-                print("\n \n" + "FELICITACIONES HAS GANADO" + "\n \n")
-                self.onGame = False
-                break
-            selectedLetter = input("\n \n" + self.words[number].word + " digita una letra: ")
+            print(self.words[self.number].showWord())
+            selectedLetter = input("\n \n" + " digita una letra: ")
             self.selectedLetters = self.selectedLetters + selectedLetter + " " 
             
-            if self.words[number].mathLetter(selectedLetter) == False:
+            match = self.words[self.number].mathLetter(selectedLetter)
+#            selec = input(match)
+            if match == False: #Verifica que la letra registrada esté en la palabra, si no está suma un intento
                 tries +=1
+            
+            if self.words[self.number].complete: # valida si la palabra está completa, si lo es gana el juego y finaliza
+                self.get_paint(0)
+                print("\n \n" + "FELICITACIONES HAS GANADO" + "\n \n")
+                tries = 0
+                self.continueGame()
 
             left = self.oportunities - tries
-            if left == 0:
+            if left == 0: #Verifica que todavía hayan intentos, si ya no hay, termina el juego
                 self.get_paint(8)
-                print("\n \n" + "HAS PERDIDO SIEMPRE TE RECORDAREMOS COMO EL PIBE QUE NO PUDO ADIVINAR, QUE LA FUERZA TE ACOMPAÑE" + "\n \n")
-                self.onGame = False                
+                print("\n\nHAS PERDIDO SIEMPRE TE RECORDAREMOS COMO EL PIBE QUE NO PUDO ADIVINAR LA PALABRA: \n")
+                print(self.words[self.number].word + "\n")
+                print("QUE LA FUERZA TE ACOMPAÑE \n")
+                tries = 0               
+                self.continueGame()
+
+
+    # inicia otra palabra
+    def continueGame(self):
+        continueGame = input("Desea cargar otra palabra digite (y) de lo contrario digite (n): ")
+        if continueGame == "y":
+            self.number +=1
+            self.selectedLetters = ""
+            system("cls")
+            if self.number == len(self.words):
+                print("se han completado todas las palabras del juego, gracias por jugar")
+                self.onGame = False
+        else:
+            self.onGame = False
 
 
     #Pinta la horca, dependiendo de los intentos que lleve
